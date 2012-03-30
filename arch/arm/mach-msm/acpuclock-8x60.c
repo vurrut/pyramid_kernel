@@ -664,17 +664,6 @@ out:
 	return rc;
 }
 
-#ifdef CONFIG_PERFLOCK
-unsigned int get_max_cpu_freq(void)
-{
-	struct clkctl_acpu_speed *f;
-	for (f = acpu_freq_tbl; f->acpuclk_khz != 0; f++)
-		;
-	f--;
-	return f->acpuclk_khz;;
-}
-#endif
-
 ssize_t acpuclk_get_vdd_levels_str(char *buf) {
 	int i, len = 0;
 
@@ -901,7 +890,7 @@ static struct notifier_block __cpuinitdata acpuclock_cpu_notifier = {
 
 static unsigned int __init select_freq_plan(void)
 {
-	uint32_t pte_efuse, speed_bin, pvs, max_khz;
+	uint32_t pte_efuse, speed_bin, pvs;
 	struct clkctl_acpu_speed *f;
 
 	pte_efuse = readl_relaxed(QFPROM_PTE_EFUSE_ADDR);
@@ -910,7 +899,6 @@ static unsigned int __init select_freq_plan(void)
 	if (speed_bin == 0xF)
 		speed_bin = (pte_efuse >> 4) & 0xF;
 
-	max_khz = 1512000;
 	if (speed_bin == 0x1) {
 		pvs = (pte_efuse >> 10) & 0x7;
 		if (pvs == 0x7) {
@@ -939,16 +927,10 @@ static unsigned int __init select_freq_plan(void)
 		acpu_freq_tbl = acpu_freq_tbl_slow;
 	}
 
-	/* Truncate the table based to max_khz. */
-	for (f = acpu_freq_tbl; f->acpuclk_khz != 0; f++) {
-		if (f->acpuclk_khz > max_khz) {
-			f->acpuclk_khz = 0;
-			break;
-		}
-	}
+	for (f = acpu_freq_tbl; f->acpuclk_khz != 0; f++)
+		;
 	f--;
 	pr_info("Max ACPU freq: %u KHz\n", f->acpuclk_khz);
-
 	return f->acpuclk_khz;
 }
 
@@ -964,21 +946,21 @@ int processor_name_read_proc(char *page, char **start, off_t off,
 {
 	char *p = page;
 
-	p += sprintf(p, "1.5 GHz dualcore");
+	p += sprintf(p, "1.8 GHz dualcore");
 
 	return p - page;
 }
 
 static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 {
-	unsigned int max_cpu_khz;
 	int cpu;
 
 	mutex_init(&drv_state.lock);
 	spin_lock_init(&drv_state.l2_lock);
 
 	/* Configure hardware. */
-	max_cpu_khz = select_freq_plan();
+	select_freq_plan();
+
 	unselect_scplls();
 	scpll_set_refs();
 	for_each_possible_cpu(cpu)
@@ -989,7 +971,7 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 
 	/* Improve boot time by ramping up CPUs immediately. */
 	for_each_online_cpu(cpu)
-		acpuclk_8x60_set_rate(cpu, max_cpu_khz, SETRATE_INIT);
+		acpuclk_8x60_set_rate(cpu, 1512000, SETRATE_INIT);
 
 	acpuclk_register(&acpuclk_8x60_data);
 	cpufreq_table_init();

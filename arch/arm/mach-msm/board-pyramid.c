@@ -445,25 +445,13 @@ static struct msm_spm_platform_data msm_spm_data[] __initdata = {
 
 #ifdef CONFIG_PERFLOCK
 static unsigned pyramid_perf_acpu_table[] = {
-	384000000,
-	756000000,
-	1188000000,
+	540000000,
+	1026000000,
+	1512000000,
 };
-
 static struct perflock_platform_data pyramid_perflock_data = {
 	.perf_acpu_table = pyramid_perf_acpu_table,
 	.table_size = ARRAY_SIZE(pyramid_perf_acpu_table),
-};
-
-static unsigned pyramid_cpufreq_ceiling_acpu_table[] = {
-	-1,
-	-1,
-	1026000000,
-};
-
-static struct perflock_platform_data pyramid_cpufreq_ceiling_data = {
-	.perf_acpu_table = pyramid_cpufreq_ceiling_acpu_table,
-	.table_size = ARRAY_SIZE(pyramid_cpufreq_ceiling_acpu_table),
 };
 #endif
 
@@ -6176,7 +6164,6 @@ static void __init msm8x60_init(struct msm_board_data *board_data)
 
 #ifdef CONFIG_PERFLOCK
 	perflock_init(&pyramid_perflock_data);
-	cpufreq_ceiling_init(&pyramid_cpufreq_ceiling_data);
 #endif
 
 #ifdef CONFIG_CPU_FREQ_GOV_ONDEMAND_2_PHASE
