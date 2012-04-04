@@ -78,7 +78,7 @@ list_add_tail(&rq->queuelist, &sd->fifo_list[sync]);
 }
 
 static int
-sio_queue_empty(struct request_queue *q)
+//sio_queue_empty(struct request_queue *q)
 {
 struct sio_data *sd = q->elevator->elevator_data;
 
@@ -312,7 +312,7 @@ static struct elevator_type iosched_sio = {
 .elevator_merge_req_fn = sio_merged_requests,
 .elevator_dispatch_fn = sio_dispatch_requests,
 .elevator_add_req_fn = sio_add_request,
-.elevator_queue_empty_fn = sio_queue_empty,
+//.elevator_queue_empty_fn = sio_queue_empty,
 .elevator_former_req_fn = sio_former_request,
 .elevator_latter_req_fn = sio_latter_request,
 .elevator_init_fn = sio_init_queue,

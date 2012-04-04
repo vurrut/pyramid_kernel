@@ -692,7 +692,7 @@ static ssize_t show_inc_cpu_load(struct kobject *kobj,
 static ssize_t store_inc_cpu_load(struct kobject *kobj,
                                   struct attribute *attr, const char *buf, size_t count)
 {
-	ssize_t ret;
+	//ssize_t ret;
 	if(strict_strtoul(buf, 0, &inc_cpu_load)==-EINVAL) return -EINVAL;
     
 	if (inc_cpu_load > 100) {
@@ -785,7 +785,7 @@ static ssize_t show_pump_down_step(struct kobject *kobj,
 static ssize_t store_pump_down_step(struct kobject *kobj,
                                     struct attribute *attr, const char *buf, size_t count)
 {
-	ssize_t ret;
+	//ssize_t ret;
 	struct cpufreq_lulzactive_cpuinfo *pcpu;
     
 	if(strict_strtoul(buf, 0, &pump_down_step)==-EINVAL) return -EINVAL;
@@ -817,7 +817,7 @@ static ssize_t store_screen_off_min_step(struct kobject *kobj,
                                          struct attribute *attr, const char *buf, size_t count)
 {
 	struct cpufreq_lulzactive_cpuinfo *pcpu;
-	ssize_t ret;
+	//ssize_t ret;
     
 	if(strict_strtoul(buf, 0, &screen_off_min_step)==-EINVAL) return -EINVAL;
     
